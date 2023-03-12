@@ -1,0 +1,27 @@
+version: '3.8'
+# https://github.com/Haivision/srt/blob/master/docs/apps/srt-live-transmit.md
+
+services:
+  sls:
+    build: ./docker/sls
+    volumes:
+      - ./config/sls.conf:/etc/sls/sls.conf:ro
+    ports:
+      - "34597:3000/udp"
+      - "3000:8080"
+    restart: unless-stopped
+
+  noalbs:
+    build: ./docker/noalbs
+    depends_on:
+      - sls
+    links:
+      - sls
+    # ports:
+      # - "5000:5000/udp"
+      # - "34597:8282/udp"
+      # - "3000:8181/tcp"
+    volumes:
+      - "./config/config.json:/usr/local/config.json:ro"
+      - "./config/.env:/usr/local.env:ro"
+    restart: unless-stopped

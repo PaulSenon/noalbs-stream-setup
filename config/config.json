@@ -1,0 +1,89 @@
+{
+  "user": {
+    "id": null,
+    "name": "Pistaschios",
+    "passwordHash": null
+  },
+  "switcher": {
+    "bitrateSwitcherEnabled": true,
+    "onlySwitchWhenStreaming": false,
+    "instantlySwitchOnRecover": true,
+    "autoSwitchNotification": true,
+    "retryAttempts": 5,
+    "triggers": {
+      "low": 1000,
+      "rtt": 1000,
+      "offline": null
+    },
+    "switchingScenes": {
+      "normal": "Live",
+      "low": "Low",
+      "offline": "Disconnected"
+    },
+    "streamServers": [
+      {
+        "streamServer": {
+          "type": "SrtLiveServer",
+          "statsUrl": "X",
+          "publisher": "X"
+        },
+        "name": "SLS",
+        "priority": 0,
+        "overrideScenes": null,
+        "enabled": true
+      }
+    ]
+  },
+  "software": {
+    "type": "Obs",
+    "host": "X",
+    "password": "X",
+    "port": 0
+  },
+  "chat": {
+    "platform": "Twitch",
+    "username": "Pistaschios",
+    "admins": [
+      "Pistaschios"
+    ],
+    "prefix": "!",
+    "enablePublicCommands": false,
+    "enableModCommands": true,
+    "enableAutoStopStreamOnHostOrRaid": true,
+    "announceRaidOnAutoStop": true,
+    "commands": {
+      "Fix": {
+        "permission": null,
+        "alias": [
+          "f"
+        ]
+      },
+      "Switch": {
+        "permission": "Mod",
+        "alias": [
+          "ss"
+        ]
+      },
+      "Bitrate": {
+        "permission": null,
+        "alias": [
+          "b"
+        ]
+      }
+    }
+  },
+  "optionalScenes": {
+    "starting": null,
+    "ending": null,
+    "privacy": "privacy",
+    "refresh": null
+  },
+  "optionalOptions": {
+    "twitchTranscodingCheck": false,
+    "twitchTranscodingRetries": 5,
+    "twitchTranscodingDelaySeconds": 15,
+    "offlineTimeout": null,
+    "recordWhileStreaming": false
+  },
+  "language": "en"
+}
