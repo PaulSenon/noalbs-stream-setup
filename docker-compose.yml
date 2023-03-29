@@ -2,8 +2,21 @@ version: '3.8'
 # https://github.com/Haivision/srt/blob/master/docs/apps/srt-live-transmit.md
 
 services:
+  pwd-server:
+    build: ./docker/pwdServer
+    environment:
+      - NODE_PORT=8080
+      - SECRETS_PATH=/app/secrets.json
+    volumes:
+      - ./config/secrets.local.json:/app/secrets.json:ro
+    restart: unless-stopped
+
   sls:
     build: ./docker/sls
+    depends_on:
+      - pwd-server
+    links:
+      - pwd-server
     volumes:
       - ./config/sls.conf:/etc/sls/sls.conf:ro
     ports:

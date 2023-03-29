@@ -1,20 +1,67 @@
-FROM b3ckontwitch/sls-b3ck-edit
+# build stage
+FROM alpine:latest as build
+RUN apk update &&\
+    apk upgrade &&\ 
+    apk add --no-cache linux-headers alpine-sdk cmake tcl openssl-dev zlib-dev
+WORKDIR /tmp
+RUN git clone https://github.com/PaulSenon/srt-live-server-with-pwd-fixes-noalbs.git srt-live-server 
+RUN git clone https://github.com/Haivision/srt.git
+WORKDIR /tmp/srt
+RUN git checkout master && ./configure && make -j8 && make install
+WORKDIR /tmp/srt-live-server
+RUN make -j8
 
-# # Install dependencies
+# final stage
+FROM alpine:latest
+ENV LD_LIBRARY_PATH /lib:/usr/lib:/usr/local/lib64
+RUN apk update &&\
+    apk upgrade &&\
+    apk add --no-cache openssl libstdc++ &&\
+    adduser -D srt &&\
+    mkdir /etc/sls /logs &&\
+    chown srt /logs
+COPY --from=build /usr/local/bin/srt-* /usr/local/bin/
+COPY --from=build /usr/local/lib/libsrt* /usr/local/lib/
+COPY --from=build /tmp/srt-live-server/bin/* /usr/local/bin/
+# COPY sls.conf /etc/sls/
+VOLUME /logs
+EXPOSE 8181 30000/udp
+USER srt
+WORKDIR /home/srt
+ENTRYPOINT [ "sls", "-c", "/etc/sls/sls.conf"]
+
+
+
+# # Use the official Ubuntu base image
+# FROM ubuntu:20.04
+
+# # Set environment variables
+# ENV DEBIAN_FRONTEND=noninteractive
+
+# # Update the package index and install necessary dependencies
 # RUN apt-get update && \
-#     apt-get install -y ca-certificates libssl-dev openssl git && \
-#     apt-get install -y tclsh pkg-config cmake libssl-dev build-essential && \
-#     rm -rf /var/lib/apt/lists/*
+#     apt-get install -y \
+#     git \
+#     g++ \
+#     make \
+#     cmake \
+#     tcl \
+#     pkg-config \
+#     libssl-dev \
+#     zlib1g-dev \
+#     libsrt-dev
 
-# # Download and decompress Nginx
-# RUN mkdir -p /tmp/build && \
-#     cd /tmp/build && \
-#     git clone https://github.com/hwangsaeul/libsrt.git && \
-#     cd ./libsrt && \
-#     ./configure --enable-testing && \
+# # Clone the SRT Live Server repository
+# RUN git clone https://github.com/anders-d/srt-live-server.git
+
+# # Compile and install SRT Live Server
+# WORKDIR /srt-live-server
+# RUN make && \
 #     make
+# # Expose the necessary ports
+# EXPOSE 3000/udp
+# EXPOSE 8080
 
-# WORKDIR /tmp/build/libsrt    
-EXPOSE 3000/udp
-EXPOSE 8080
-# CMD ["./srt-live-transmit", "-v", "srt://:34597", "srt://:3001"]
+# # Specify the entry point for the container
+# # USER srt
+# ENTRYPOINT ["/srt-live-server/bin/sls", "-c", "/etc/sls/sls.conf"]

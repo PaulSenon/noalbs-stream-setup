@@ -12,6 +12,9 @@ dev: clean pull build start-attached
 pull: ## pull docker images
 	$(COMPOSE) pull --ignore-pull-failures
 
+build-nc: ## build images from Dockerfiles
+	$(COMPOSE) build --no-cache
+
 build: ## build images from Dockerfiles
 	$(COMPOSE) build
 
